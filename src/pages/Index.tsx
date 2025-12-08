@@ -5,6 +5,8 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/HeroSection';
 import { FeaturesSection } from '@/components/FeaturesSection';
+import { ModelPerformanceSection } from '@/components/ModelPerformanceSection';
+import { AboutSection } from '@/components/AboutSection';
 import { UrlScanner } from '@/components/UrlScanner';
 import { AnalysisResults } from '@/components/AnalysisResults';
 import { useAnalysis } from '@/hooks/useAnalysis';
@@ -66,6 +68,12 @@ const Index = () => {
 
             {/* Features Section */}
             <FeaturesSection />
+
+            {/* Model Performance Section */}
+            <ModelPerformanceSection />
+
+            {/* About Section */}
+            <AboutSection />
           </div>
         </main>
 

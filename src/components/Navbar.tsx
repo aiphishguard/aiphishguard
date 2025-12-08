@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Shield, Menu, X, Github, Linkedin, History, MessageSquare, Layers, BarChart3 } from 'lucide-react';
+import { Shield, Menu, X, Github, Linkedin } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { label: 'Scanner', href: '/', icon: Shield },
-  { label: 'Bulk Scan', href: '/bulk-scanner', icon: Layers },
-  { label: 'History', href: '/history', icon: History },
-  { label: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { label: 'Feedback', href: '/feedback', icon: MessageSquare },
+  { label: 'Scanner', href: '/' },
+  { label: 'Features', href: '/#features' },
+  { label: 'Bulk Scan', href: '/bulk-scanner' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'History', href: '/history' },
+  { label: 'About', href: '/feedback' },
 ];
 
 const socialLinks = [
@@ -22,16 +23,25 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  const isActive = (href: string) => {
+    if (href === '/') return location.pathname === '/';
+    if (href.startsWith('/#')) return location.pathname === '/' && location.hash === href.slice(1);
+    return location.pathname === href;
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary">
-            <Shield className="h-6 w-6 text-primary-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 border border-primary/30">
+            <Shield className="h-5 w-5 text-primary" />
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-xl font-bold tracking-tight">PhishGuard AI</h1>
+            <h1 className="text-xl font-bold tracking-tight">
+              <span className="text-foreground">PhishGuard</span>
+              <span className="text-primary"> AI</span>
+            </h1>
           </div>
         </Link>
 
@@ -43,9 +53,9 @@ export function Navbar() {
               to={link.href}
               className={cn(
                 "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                location.pathname === link.href
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                isActive(link.href)
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {link.label}
@@ -55,19 +65,6 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2">
-          {socialLinks.map((social) => (
-            <Button
-              key={social.label}
-              variant="ghost"
-              size="icon"
-              asChild
-              className="h-9 w-9"
-            >
-              <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.label}>
-                <social.icon className="h-4 w-4" />
-              </a>
-            </Button>
-          ))}
           <ThemeToggle />
         </div>
 
@@ -96,12 +93,11 @@ export function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                  location.pathname === link.href
+                  isActive(link.href)
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                 )}
               >
-                <link.icon className="h-4 w-4" />
                 {link.label}
               </Link>
             ))}
