@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Shield, Loader2, AlertTriangle, Zap } from 'lucide-react';
+import { Search, Shield, Loader2, AlertTriangle, Zap, Info, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { validateUrl, UrlValidationResult } from '@/lib/url-validation';
 
 interface UrlScannerProps {
   onAnalyze: (url: string, options: { deepAnalysis: boolean; virusTotalScan: boolean }) => void;
@@ -19,11 +20,25 @@ export function UrlScanner({ onAnalyze, isAnalyzing, progress, currentStep }: Ur
   const [url, setUrl] = useState('');
   const [deepAnalysis, setDeepAnalysis] = useState(true);
   const [virusTotalScan, setVirusTotalScan] = useState(false);
+  const [validation, setValidation] = useState<UrlValidationResult | null>(null);
+
+  const handleUrlChange = (value: string) => {
+    setUrl(value);
+    // Clear validation when typing
+    if (validation) {
+      setValidation(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (url.trim()) {
-      onAnalyze(url.trim(), { deepAnalysis, virusTotalScan });
+    
+    // Run advanced validation
+    const result = validateUrl(url);
+    setValidation(result);
+    
+    if (result.isValid && result.sanitizedUrl) {
+      onAnalyze(result.sanitizedUrl, { deepAnalysis, virusTotalScan });
     }
   };
 
@@ -46,11 +61,38 @@ export function UrlScanner({ onAnalyze, isAnalyzing, progress, currentStep }: Ur
               type="text"
               placeholder="Enter URL to analyze (e.g., https://example.com)"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => handleUrlChange(e.target.value)}
               disabled={isAnalyzing}
-              className="pl-12 h-14 text-base md:text-lg bg-secondary/50 border-2 focus:border-primary transition-colors"
+              className={cn(
+                "pl-12 h-14 text-base md:text-lg bg-secondary/50 border-2 transition-colors",
+                validation?.errors.length ? "border-destructive focus:border-destructive" : "focus:border-primary"
+              )}
             />
           </div>
+
+          {/* Validation Errors */}
+          {validation?.errors.length ? (
+            <div className="space-y-2 animate-fade-in">
+              {validation.errors.map((error, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                  <XCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {/* Validation Warnings (shown even if valid) */}
+          {validation?.warnings.length && validation.isValid ? (
+            <div className="space-y-2 animate-fade-in">
+              {validation.warnings.map((warning, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-warning bg-warning/10 p-3 rounded-lg">
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{warning}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           <div className="flex flex-wrap gap-6 justify-center">
             <div className="flex items-center space-x-2">
@@ -128,7 +170,10 @@ export function UrlScanner({ onAnalyze, isAnalyzing, progress, currentStep }: Ur
                 key={exampleUrl}
                 variant="outline"
                 size="sm"
-                onClick={() => setUrl(exampleUrl)}
+                onClick={() => {
+                  setUrl(exampleUrl);
+                  setValidation(null);
+                }}
                 disabled={isAnalyzing}
                 className="text-xs font-mono truncate max-w-[200px]"
               >
