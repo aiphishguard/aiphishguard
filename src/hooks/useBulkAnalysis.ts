@@ -141,18 +141,20 @@ export function useBulkAnalysis(): UseBulkAnalysisReturn {
       setSummary(calculateSummary(results));
     };
 
-    // Process URLs in batches
+    // Process URLs in batches using index tracking
+    let currentIndex = 0;
+    
     const batchProcess = async () => {
-      const pending = queue.filter(i => i.status === 'pending');
-      const batch = pending.slice(0, CONCURRENT_SCANS);
-
+      const batch = initialItems.slice(currentIndex, currentIndex + CONCURRENT_SCANS);
+      
       if (batch.length === 0) return;
-
+      
+      currentIndex += batch.length;
+      
       await Promise.all(batch.map(processUrl));
 
-      // Process next batch
-      const remaining = results.filter(i => i.status === 'pending');
-      if (remaining.length > 0) {
+      // Process next batch if there are more items
+      if (currentIndex < initialItems.length) {
         await batchProcess();
       }
     };
