@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Code } from 'lucide-react';
 
 const teamMembers = [
-  { name: 'Muhammad Basit Ali', role: 'ML Engineer' },
+  { name: 'Basit Ali', role: 'ML Engineer' },
   { name: 'Ali Hassan', role: 'Full Stack Developer' },
   { name: 'Hassam Mehmood', role: 'Backend Developer' },
 ];
@@ -12,7 +12,7 @@ const supervisor = {
   name: 'Dr. Farhan Hassan Khan',
   title: 'Project Supervisor',
   institution: 'The Islamia University of Bahawalpur',
-  department: 'Department of Computer Science & IT',
+  department: 'Department of Cyber Security And Digital Forensics',
 };
 
 export function AboutSection() {
