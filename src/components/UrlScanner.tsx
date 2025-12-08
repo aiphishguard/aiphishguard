@@ -38,17 +38,6 @@ export function UrlScanner({ onAnalyze, isAnalyzing, progress, currentStep }: Ur
     <Card className="glass-card overflow-hidden">
       <div className="h-1 w-full gradient-primary" />
       <CardContent className="p-6 md:p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-4">
-            <Shield className="h-8 w-8 text-primary animate-pulse-slow" />
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">
-            Scan URL for Threats
-          </h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Enter a URL to analyze for phishing attempts, malware, and other security threats using AI-powered detection.
-          </p>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">

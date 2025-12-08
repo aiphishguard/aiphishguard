@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      feedback: {
+        Row: {
+          created_at: string
+          email: string
+          feedback_type: string
+          id: string
+          message: string
+          name: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          feedback_type: string
+          id?: string
+          message: string
+          name: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          feedback_type?: string
+          id?: string
+          message?: string
+          name?: string
+          subject?: string
+        }
+        Relationships: []
+      }
+      scan_history: {
+        Row: {
+          analysis: string | null
+          confidence: number
+          content_analysis: Json | null
+          id: string
+          language_detection: Json | null
+          risk_score: number
+          scanned_at: string
+          threat_level: string
+          url: string
+          url_features: Json | null
+          virustotal_result: Json | null
+          warnings: string[] | null
+        }
+        Insert: {
+          analysis?: string | null
+          confidence: number
+          content_analysis?: Json | null
+          id?: string
+          language_detection?: Json | null
+          risk_score: number
+          scanned_at?: string
+          threat_level: string
+          url: string
+          url_features?: Json | null
+          virustotal_result?: Json | null
+          warnings?: string[] | null
+        }
+        Update: {
+          analysis?: string | null
+          confidence?: number
+          content_analysis?: Json | null
+          id?: string
+          language_detection?: Json | null
+          risk_score?: number
+          scanned_at?: string
+          threat_level?: string
+          url?: string
+          url_features?: Json | null
+          virustotal_result?: Json | null
+          warnings?: string[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
