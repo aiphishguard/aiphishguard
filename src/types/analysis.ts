@@ -66,6 +66,79 @@ export interface VirusTotalResult {
   permalink?: string;
 }
 
+// Phase 1: New interfaces for enhanced output
+export interface AnalysisStep {
+  id: string;
+  name: string;
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+  duration?: number;
+  startTime?: number;
+  endTime?: number;
+  result?: 'pass' | 'fail' | 'warning';
+  details?: string;
+}
+
+export interface ThreatFactors {
+  urlStructure: number;
+  domainReputation: number;
+  contentRisk: number;
+  sslSecurity: number;
+  externalIntelligence: number;
+}
+
+export interface Recommendation {
+  id: string;
+  type: 'danger' | 'warning' | 'info' | 'success';
+  title: string;
+  description: string;
+  action?: string;
+}
+
+// Phase 2: New analysis interfaces
+export interface SSLAnalysis {
+  isValid: boolean;
+  issuer: string;
+  validFrom: string;
+  validTo: string;
+  daysUntilExpiry: number;
+  certificateAge: number;
+  isFreeSSL: boolean;
+  sans: string[];
+  protocol: string;
+  riskLevel: 'low' | 'medium' | 'high';
+  warnings: string[];
+}
+
+export interface RedirectChainItem {
+  url: string;
+  statusCode: number;
+  isShortener: boolean;
+  isSuspicious: boolean;
+}
+
+export interface RedirectAnalysis {
+  chain: RedirectChainItem[];
+  totalRedirects: number;
+  finalUrl: string;
+  hasShortener: boolean;
+  hasSuspiciousPattern: boolean;
+  riskLevel: 'low' | 'medium' | 'high';
+}
+
+export interface DNSAnalysis {
+  aRecords: string[];
+  mxRecords: string[];
+  txtRecords: string[];
+  nsRecords: string[];
+  hasMxRecords: boolean;
+  hasSpf: boolean;
+  hasDkim: boolean;
+  hasDmarc: boolean;
+  hostingProvider?: string;
+  ipLocation?: string;
+  riskLevel: 'low' | 'medium' | 'high';
+}
+
 export interface AnalysisResult {
   id?: string;
   url: string;
@@ -79,6 +152,14 @@ export interface AnalysisResult {
   aiAnalysis: string;
   warnings: string[];
   timestamp: string;
+  // Phase 1: New fields
+  analysisSteps?: AnalysisStep[];
+  threatFactors?: ThreatFactors;
+  recommendations?: Recommendation[];
+  // Phase 2: New fields
+  sslAnalysis?: SSLAnalysis;
+  redirectAnalysis?: RedirectAnalysis;
+  dnsAnalysis?: DNSAnalysis;
 }
 
 export interface ScanHistoryItem {
@@ -87,4 +168,25 @@ export interface ScanHistoryItem {
   threatLevel: ThreatLevel;
   riskScore: number;
   timestamp: string;
+}
+
+// Phase 3: Bulk scanning interfaces
+export interface BulkScanItem {
+  id: string;
+  url: string;
+  status: 'pending' | 'scanning' | 'completed' | 'error';
+  result?: AnalysisResult;
+  error?: string;
+}
+
+export interface BulkScanSummary {
+  totalUrls: number;
+  completed: number;
+  safe: number;
+  low: number;
+  medium: number;
+  high: number;
+  critical: number;
+  errors: number;
+  averageRiskScore: number;
 }

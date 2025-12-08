@@ -8,53 +8,37 @@
   :root {
     --background: 210 20% 98%;
     --foreground: 222 47% 11%;
-
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
-
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-
     --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 217 91% 60%;
-
     --radius: 0.75rem;
-
-    /* Custom threat level colors */
     --threat-safe: 142 76% 36%;
     --threat-low: 142 76% 36%;
     --threat-medium: 45 93% 47%;
     --threat-high: 25 95% 53%;
     --threat-critical: 0 84% 60%;
-
-    /* Custom accent colors */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     --warning: 45 93% 47%;
     --warning-foreground: 0 0% 0%;
     --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
-
-    /* Gradient stops */
     --gradient-start: 217 91% 60%;
     --gradient-end: 263 70% 50%;
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -68,47 +52,34 @@
   .dark {
     --background: 222 47% 6%;
     --foreground: 210 40% 98%;
-
     --card: 222 47% 9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-
     --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 217 91% 60%;
-
-    /* Custom threat level colors - dark mode */
     --threat-safe: 142 70% 45%;
     --threat-low: 142 70% 45%;
     --threat-medium: 45 93% 55%;
     --threat-high: 25 95% 60%;
     --threat-critical: 0 84% 60%;
-
-    /* Custom accent colors - dark mode */
     --success: 142 70% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 45 93% 55%;
     --warning-foreground: 0 0% 0%;
     --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
-
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -121,93 +92,54 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold tracking-tight;
-  }
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground font-sans antialiased; }
+  h1, h2, h3, h4, h5, h6 { @apply font-display font-bold tracking-tight; }
 }
 
 @layer utilities {
-  .font-display {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  }
-  
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .gradient-primary {
-    @apply bg-gradient-to-r from-primary to-purple-500;
-  }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary via-blue-400 to-cyan-400 bg-clip-text text-transparent;
-  }
-
-  .glass-card {
-    @apply bg-card/80 backdrop-blur-lg border border-border/50 rounded-xl;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-scan {
-    animation: scan 2s ease-in-out infinite;
-  }
-
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
+  .font-display { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .gradient-primary { @apply bg-gradient-to-r from-primary to-purple-500; }
+  .gradient-text { @apply bg-gradient-to-r from-primary via-blue-400 to-cyan-400 bg-clip-text text-transparent; }
+  .glass-card { @apply bg-card/80 backdrop-blur-lg border border-border/50 rounded-xl; }
+  .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  .animate-scan { animation: scan 2s ease-in-out infinite; }
+  .animate-glow { animation: glow 2s ease-in-out infinite alternate; }
 
   @keyframes scan {
-    0%, 100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    50% {
-      transform: translateY(10px);
-      opacity: 0.5;
-    }
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(10px); opacity: 0.5; }
   }
 
   @keyframes glow {
-    from {
-      box-shadow: 0 0 20px -10px hsl(var(--primary));
-    }
-    to {
-      box-shadow: 0 0 30px -5px hsl(var(--primary));
-    }
+    from { box-shadow: 0 0 20px -10px hsl(var(--primary)); }
+    to { box-shadow: 0 0 30px -5px hsl(var(--primary)); }
   }
 
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
+  @keyframes circular-progress {
+    from { stroke-dashoffset: var(--circumference); }
+    to { stroke-dashoffset: var(--offset); }
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  @keyframes fade-slide-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
+  @keyframes pulse-warning {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.02); }
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 4px;
-  }
+  .animate-circular-progress { animation: circular-progress 1.5s ease-out forwards; }
+  .animate-fade-slide-in { animation: fade-slide-in 0.3s ease-out forwards; }
+  .animate-pulse-warning { animation: pulse-warning 1.5s ease-in-out infinite; }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.5);
-  }
+  html { scroll-behavior: smooth; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.3); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
 }

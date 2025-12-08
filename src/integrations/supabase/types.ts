@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      bulk_scans: {
+        Row: {
+          completed: number
+          created_at: string
+          id: string
+          name: string | null
+          status: string
+          summary: Json | null
+          total_urls: number
+        }
+        Insert: {
+          completed?: number
+          created_at?: string
+          id?: string
+          name?: string | null
+          status?: string
+          summary?: Json | null
+          total_urls?: number
+        }
+        Update: {
+          completed?: number
+          created_at?: string
+          id?: string
+          name?: string | null
+          status?: string
+          summary?: Json | null
+          total_urls?: number
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           created_at: string
@@ -47,12 +77,18 @@ export type Database = {
       scan_history: {
         Row: {
           analysis: string | null
+          analysis_steps: Json | null
+          bulk_scan_id: string | null
           confidence: number
           content_analysis: Json | null
+          dns_analysis: Json | null
           id: string
           language_detection: Json | null
+          redirect_analysis: Json | null
           risk_score: number
           scanned_at: string
+          ssl_analysis: Json | null
+          threat_factors: Json | null
           threat_level: string
           url: string
           url_features: Json | null
@@ -61,12 +97,18 @@ export type Database = {
         }
         Insert: {
           analysis?: string | null
+          analysis_steps?: Json | null
+          bulk_scan_id?: string | null
           confidence: number
           content_analysis?: Json | null
+          dns_analysis?: Json | null
           id?: string
           language_detection?: Json | null
+          redirect_analysis?: Json | null
           risk_score: number
           scanned_at?: string
+          ssl_analysis?: Json | null
+          threat_factors?: Json | null
           threat_level: string
           url: string
           url_features?: Json | null
@@ -75,19 +117,33 @@ export type Database = {
         }
         Update: {
           analysis?: string | null
+          analysis_steps?: Json | null
+          bulk_scan_id?: string | null
           confidence?: number
           content_analysis?: Json | null
+          dns_analysis?: Json | null
           id?: string
           language_detection?: Json | null
+          redirect_analysis?: Json | null
           risk_score?: number
           scanned_at?: string
+          ssl_analysis?: Json | null
+          threat_factors?: Json | null
           threat_level?: string
           url?: string
           url_features?: Json | null
           virustotal_result?: Json | null
           warnings?: string[] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_bulk_scan"
+            columns: ["bulk_scan_id"]
+            isOneToOne: false
+            referencedRelation: "bulk_scans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

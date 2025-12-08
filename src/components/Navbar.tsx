@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Shield, Menu, X, Github, Linkedin, History, MessageSquare } from 'lucide-react';
+import { Shield, Menu, X, Github, Linkedin, History, MessageSquare, Layers, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,9 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { label: 'Scanner', href: '/', icon: Shield },
+  { label: 'Bulk Scan', href: '/bulk-scanner', icon: Layers },
   { label: 'History', href: '/history', icon: History },
+  { label: 'Dashboard', href: '/dashboard', icon: BarChart3 },
   { label: 'Feedback', href: '/feedback', icon: MessageSquare },
 ];
 

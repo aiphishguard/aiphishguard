@@ -1,1 +1,19 @@
 project_id = "yfnaonbnruagidjwcgvn"
+
+[functions.analyze-url]
+verify_jwt = false
+
+[functions.content-analysis]
+verify_jwt = false
+
+[functions.virustotal-scan]
+verify_jwt = false
+
+[functions.ssl-analysis]
+verify_jwt = false
+
+[functions.redirect-analysis]
+verify_jwt = false
+
+[functions.dns-analysis]
+verify_jwt = false
