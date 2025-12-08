@@ -7,11 +7,10 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { label: 'Scanner', href: '/' },
-  { label: 'Features', href: '/#features' },
   { label: 'Bulk Scan', href: '/bulk-scanner' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'History', href: '/history' },
-  { label: 'About', href: '/feedback' },
+  { label: 'Feedback', href: '/feedback' },
 ];
 
 const socialLinks = [

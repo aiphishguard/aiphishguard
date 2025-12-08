@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ThemeProvider } from 'next-themes';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -13,15 +11,31 @@ import {
   Pie,
   Cell,
   AreaChart,
-  Area
+  Area,
+  BarChart,
+  Bar
 } from 'recharts';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThreatLevelBadge } from '@/components/ThreatLevelBadge';
 import { supabase } from '@/integrations/supabase/client';
-import { Shield, TrendingUp, AlertTriangle, Globe } from 'lucide-react';
+import { 
+  Shield, 
+  TrendingUp, 
+  AlertTriangle, 
+  Globe, 
+  Activity,
+  Zap,
+  Target,
+  BarChart3,
+  ArrowUpRight,
+  ArrowDownRight,
+  Sparkles,
+  Clock,
+  CheckCircle2
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ThreatLevel } from '@/types/analysis';
 
@@ -153,6 +167,8 @@ export default function Dashboard() {
   const highRiskCount = scans.filter(s => 
     s.threat_level === 'high' || s.threat_level === 'critical'
   ).length;
+  const safeCount = scans.filter(s => s.threat_level === 'safe' || s.threat_level === 'low').length;
+  const safePercentage = totalScans > 0 ? Math.round((safeCount / totalScans) * 100) : 0;
   const recentHighRisk = scans
     .filter(s => s.threat_level === 'high' || s.threat_level === 'critical')
     .slice(0, 5);
@@ -163,249 +179,346 @@ export default function Dashboard() {
         <title>Analytics Dashboard - PhishGuard AI</title>
         <meta 
           name="description" 
-          content="View scan statistics and threat analytics from PhishGuard AI." 
+          content="View comprehensive scan statistics and threat analytics from PhishGuard AI security platform." 
         />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
 
-        <main className="flex-1 container py-8 md:py-12">
-          <div className="max-w-7xl mx-auto space-y-8">
-            {/* Header */}
-            <div className="text-center space-y-4">
-              <h1 className="text-3xl md:text-4xl font-bold gradient-text">
-                Analytics Dashboard
-              </h1>
-              <p className="text-muted-foreground">
-                Insights and statistics from URL security scans
-              </p>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-primary/10">
-                      <Shield className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Scans</p>
-                      <p className="text-2xl font-bold">{totalScans}</p>
-                    </div>
+        <main className="flex-1 relative overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0 grid-pattern opacity-30" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl" />
+          
+          <div className="container relative py-8 md:py-12">
+            <div className="max-w-7xl mx-auto space-y-8">
+              {/* Header */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+                    <BarChart3 className="h-8 w-8 text-primary" />
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-warning/10">
-                      <TrendingUp className="h-6 w-6 text-warning" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Avg Risk Score</p>
-                      <p className={cn(
-                        "text-2xl font-bold",
-                        avgRiskScore < 30 && "text-success",
-                        avgRiskScore >= 30 && avgRiskScore < 60 && "text-warning",
-                        avgRiskScore >= 60 && "text-destructive"
-                      )}>
-                        {avgRiskScore}
-                      </p>
-                    </div>
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold gradient-text">
+                      Analytics Dashboard
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                      Real-time insights from PhishGuard AI security scans
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-destructive/10">
-                      <AlertTriangle className="h-6 w-6 text-destructive" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">High Risk URLs</p>
-                      <p className="text-2xl font-bold text-destructive">{highRiskCount}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-info/10">
-                      <Globe className="h-6 w-6 text-info" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Unique Domains</p>
-                      <p className="text-2xl font-bold">{topDomains.length}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Charts Row */}
-            <div className="grid gap-6 lg:grid-cols-2">
-              {/* Scans Over Time */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Scans Over Time</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={dailyStats}>
-                        <defs>
-                          <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis 
-                          dataKey="date" 
-                          stroke="hsl(var(--muted-foreground))"
-                          fontSize={12}
-                        />
-                        <YAxis 
-                          stroke="hsl(var(--muted-foreground))"
-                          fontSize={12}
-                        />
-                        <Tooltip 
-                          contentStyle={{
-                            backgroundColor: 'hsl(var(--popover))',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: '8px',
-                          }}
-                        />
-                        <Area 
-                          type="monotone" 
-                          dataKey="count" 
-                          stroke="hsl(var(--primary))" 
-                          fillOpacity={1}
-                          fill="url(#colorCount)"
-                          strokeWidth={2}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Threat Distribution */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Threat Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px] flex items-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={threatDistribution}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={2}
-                          dataKey="value"
-                        >
-                          {threatDistribution.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          formatter={(value: number) => [`${value} URLs`, '']}
-                          contentStyle={{
-                            backgroundColor: 'hsl(var(--popover))',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: '8px',
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="space-y-2">
-                      {threatDistribution.map((item) => (
-                        <div key={item.name} className="flex items-center gap-2">
-                          <div 
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: item.color }}
-                          />
-                          <span className="text-sm">
-                            {item.name}: <strong>{item.value}</strong>
-                          </span>
+              {/* Stats Cards - Enhanced Design */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card className="glass-card group hover:border-primary/40 transition-all duration-300 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground font-medium">Total Scans</p>
+                        <p className="text-3xl font-bold">{totalScans}</p>
+                        <div className="flex items-center gap-1 text-xs text-success">
+                          <ArrowUpRight className="h-3 w-3" />
+                          <span>Active monitoring</span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Bottom Row */}
-            <div className="grid gap-6 lg:grid-cols-2">
-              {/* Top Scanned Domains */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Most Scanned Domains</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {topDomains.map((item, index) => (
-                      <div 
-                        key={item.domain}
-                        className="flex items-center justify-between p-2 rounded-lg bg-secondary/30"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm text-muted-foreground w-6">
-                            #{index + 1}
-                          </span>
-                          <span className="font-mono text-sm truncate max-w-[200px]">
-                            {item.domain}
-                          </span>
-                        </div>
-                        <Badge variant="secondary">{item.count} scans</Badge>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 group-hover:scale-110 transition-transform">
+                        <Shield className="h-6 w-6 text-primary" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-              {/* Recent High Risk */}
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Recent High-Risk URLs</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {recentHighRisk.length > 0 ? (
-                    <div className="space-y-3">
-                      {recentHighRisk.map((scan) => (
-                        <div 
-                          key={scan.id}
-                          className="flex items-center justify-between p-3 rounded-lg bg-destructive/5 border border-destructive/20"
-                        >
-                          <div className="flex-1 min-w-0 mr-3">
-                            <p className="font-mono text-sm truncate">{scan.url}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(scan.scanned_at).toLocaleString()}
-                            </p>
-                          </div>
-                          <ThreatLevelBadge level={scan.threat_level as ThreatLevel} size="sm" />
+                <Card className="glass-card group hover:border-warning/40 transition-all duration-300 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-warning/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground font-medium">Avg Risk Score</p>
+                        <p className={cn(
+                          "text-3xl font-bold",
+                          avgRiskScore < 30 && "text-success",
+                          avgRiskScore >= 30 && avgRiskScore < 60 && "text-warning",
+                          avgRiskScore >= 60 && "text-destructive"
+                        )}>
+                          {avgRiskScore}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Activity className="h-3 w-3" />
+                          <span>Based on {totalScans} URLs</span>
                         </div>
-                      ))}
+                      </div>
+                      <div className="p-4 rounded-2xl bg-warning/10 border border-warning/20 group-hover:scale-110 transition-transform">
+                        <TrendingUp className="h-6 w-6 text-warning" />
+                      </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Shield className="h-12 w-12 mx-auto mb-3 text-success" />
-                      <p>No high-risk URLs detected!</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="glass-card group hover:border-destructive/40 transition-all duration-300 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground font-medium">High Risk URLs</p>
+                        <p className="text-3xl font-bold text-destructive">{highRiskCount}</p>
+                        <div className="flex items-center gap-1 text-xs text-destructive">
+                          <AlertTriangle className="h-3 w-3" />
+                          <span>Threats detected</span>
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 group-hover:scale-110 transition-transform">
+                        <Target className="h-6 w-6 text-destructive" />
+                      </div>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card className="glass-card group hover:border-success/40 transition-all duration-300 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-success/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground font-medium">Safe Rate</p>
+                        <p className="text-3xl font-bold text-success">{safePercentage}%</p>
+                        <div className="flex items-center gap-1 text-xs text-success">
+                          <CheckCircle2 className="h-3 w-3" />
+                          <span>{safeCount} safe URLs</span>
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-success/10 border border-success/20 group-hover:scale-110 transition-transform">
+                        <Sparkles className="h-6 w-6 text-success" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Scans Over Time */}
+                <Card className="glass-card">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Activity className="h-5 w-5 text-primary" />
+                          Scan Activity
+                        </CardTitle>
+                        <CardDescription>Daily scan volume over time</CardDescription>
+                      </div>
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                        <Zap className="h-3 w-3 mr-1" />
+                        Live
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={dailyStats}>
+                          <defs>
+                            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                          <XAxis 
+                            dataKey="date" 
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={11}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis 
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={11}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip 
+                            contentStyle={{
+                              backgroundColor: 'hsl(var(--popover))',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '12px',
+                              boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                            }}
+                            labelStyle={{ color: 'hsl(var(--foreground))' }}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="count" 
+                            stroke="hsl(var(--primary))" 
+                            fillOpacity={1}
+                            fill="url(#colorCount)"
+                            strokeWidth={2.5}
+                            dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 3 }}
+                            activeDot={{ r: 6, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--background))', strokeWidth: 2 }}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Threat Distribution */}
+                <Card className="glass-card">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Target className="h-5 w-5 text-primary" />
+                          Threat Distribution
+                        </CardTitle>
+                        <CardDescription>Breakdown by risk level</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px] flex items-center gap-6">
+                      <div className="flex-1 h-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={threatDistribution}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={65}
+                              outerRadius={100}
+                              paddingAngle={3}
+                              dataKey="value"
+                              strokeWidth={0}
+                            >
+                              {threatDistribution.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              formatter={(value: number) => [`${value} URLs`, '']}
+                              contentStyle={{
+                                backgroundColor: 'hsl(var(--popover))',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '12px',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                              }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="space-y-3 min-w-[140px]">
+                        {threatDistribution.map((item) => (
+                          <div key={item.name} className="flex items-center gap-3">
+                            <div 
+                              className="w-3 h-3 rounded-full shadow-lg"
+                              style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}50` }}
+                            />
+                            <div className="flex-1">
+                              <span className="text-sm font-medium">{item.name}</span>
+                              <p className="text-xs text-muted-foreground">{item.value} URLs</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Bottom Row */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Top Scanned Domains */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-primary" />
+                      Most Scanned Domains
+                    </CardTitle>
+                    <CardDescription>Top domains by scan frequency</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {topDomains.length > 0 ? (
+                      <div className="space-y-3">
+                        {topDomains.slice(0, 8).map((item, index) => (
+                          <div 
+                            key={item.domain}
+                            className="flex items-center gap-4 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                          >
+                            <div className={cn(
+                              "flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold",
+                              index === 0 && "bg-primary/20 text-primary",
+                              index === 1 && "bg-warning/20 text-warning",
+                              index === 2 && "bg-info/20 text-info",
+                              index > 2 && "bg-muted text-muted-foreground"
+                            )}>
+                              {index + 1}
+                            </div>
+                            <span className="font-mono text-sm truncate flex-1">
+                              {item.domain}
+                            </span>
+                            <Badge variant="outline" className="ml-auto shrink-0">
+                              {item.count} scans
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Globe className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p>No domains scanned yet</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Recent High Risk */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-destructive" />
+                      Recent High-Risk URLs
+                    </CardTitle>
+                    <CardDescription>Latest detected threats</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {recentHighRisk.length > 0 ? (
+                      <div className="space-y-3">
+                        {recentHighRisk.map((scan) => (
+                          <div 
+                            key={scan.id}
+                            className="flex items-center gap-4 p-3 rounded-xl bg-destructive/5 border border-destructive/20 hover:bg-destructive/10 transition-colors"
+                          >
+                            <div className="p-2 rounded-lg bg-destructive/10">
+                              <AlertTriangle className="h-4 w-4 text-destructive" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-mono text-sm truncate">{scan.url}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Clock className="h-3 w-3 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(scan.scanned_at).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <ThreatLevelBadge level={scan.threat_level as ThreatLevel} size="sm" />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-success/10 mb-4">
+                          <Shield className="h-8 w-8 text-success" />
+                        </div>
+                        <p className="font-medium text-success">All Clear!</p>
+                        <p className="text-sm text-muted-foreground mt-1">No high-risk URLs detected</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </main>
