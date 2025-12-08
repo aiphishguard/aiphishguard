@@ -9,7 +9,7 @@ const teamMembers = [
 ];
 
 const supervisor = {
-  name: 'Dr. Farhan Hassan Khan',
+  name: 'Engr. Farhan Hassan',
   title: 'Project Supervisor',
   institution: 'The Islamia University of Bahawalpur',
   department: 'Department of Cyber Security And Digital Forensics',
