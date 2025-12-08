@@ -249,9 +249,10 @@ export function useAnalysis(): UseAnalysisReturn {
       });
       
       const aiEnd = Date.now();
-      if (aiError) {
+      if (aiError || aiData?.error) {
+        const errorMessage = aiData?.error || aiError?.message || 'AI analysis failed';
         updateStep('ai-analysis', { status: 'failed', endTime: aiEnd, duration: aiEnd - aiStart, result: 'fail' });
-        throw new Error('AI analysis failed');
+        throw new Error(errorMessage);
       }
       
       updateStep('ai-analysis', { 
@@ -475,7 +476,8 @@ export function useAnalysis(): UseAnalysisReturn {
       return analysisResult;
     } catch (error) {
       console.error('Analysis error:', error);
-      toast.error('Analysis failed. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
+      toast.error(errorMessage);
       return null;
     } finally {
       setIsAnalyzing(false);
