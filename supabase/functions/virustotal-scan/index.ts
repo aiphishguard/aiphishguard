@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { isValidPublicUrl } from "../_shared/url-validator.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +19,16 @@ serve(async (req) => {
     if (!url) {
       return new Response(
         JSON.stringify({ error: 'URL is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate URL to prevent SSRF attacks
+    const urlValidation = isValidPublicUrl(url);
+    if (!urlValidation.valid) {
+      console.log('URL validation failed:', urlValidation.error);
+      return new Response(
+        JSON.stringify({ error: urlValidation.error }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
