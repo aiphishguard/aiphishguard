@@ -125,7 +125,7 @@ export function useAnalysis(): UseAnalysisReturn {
         contentAnalysis,
         languageDetection,
         virusTotalResult,
-        aiAnalysis: aiData.analysis || '',
+        aiAnalysis: aiData.analysis || 'No analysis available',
         warnings: allWarnings,
         timestamp: new Date().toISOString(),
       };

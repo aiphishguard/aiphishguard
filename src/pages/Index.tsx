@@ -1,59 +1,75 @@
+import { useRef } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { Header } from '@/components/Header';
+import { Helmet } from 'react-helmet-async';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { HeroSection } from '@/components/HeroSection';
+import { FeaturesSection } from '@/components/FeaturesSection';
 import { UrlScanner } from '@/components/UrlScanner';
 import { AnalysisResults } from '@/components/AnalysisResults';
-import { StatsCards } from '@/components/StatsCards';
 import { useAnalysis } from '@/hooks/useAnalysis';
+import { saveScanToHistory } from '@/hooks/useScanHistory';
 
 const Index = () => {
   const { isAnalyzing, analysisProgress, currentStep, result, analyze, reset } = useAnalysis();
+  const scannerRef = useRef<HTMLDivElement>(null);
 
-  const handleAnalyze = (url: string, options: { deepAnalysis: boolean; virusTotalScan: boolean }) => {
-    analyze(url, options);
+  const handleAnalyze = async (url: string, options: { deepAnalysis: boolean; virusTotalScan: boolean }) => {
+    const analysisResult = await analyze(url, options);
+    if (analysisResult) {
+      await saveScanToHistory(analysisResult);
+    }
+  };
+
+  const scrollToScanner = () => {
+    scannerRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div className="min-h-screen bg-background">
-        <Header />
-        
-        <main className="container py-8 md:py-12">
-          <div className="max-w-4xl mx-auto space-y-8">
+      <Helmet>
+        <title>PhishGuard AI - Advanced Phishing Detection System</title>
+        <meta name="description" content="Protect yourself from phishing attacks with our AI-powered detection system. Real-time URL analysis using machine learning and threat intelligence." />
+      </Helmet>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+
+        <main className="flex-1">
+          <div className="container">
             {/* Hero Section */}
-            <div className="text-center space-y-4 mb-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                <span className="gradient-text">PhishGuard</span> AI
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Advanced AI-powered phishing detection with deep content analysis, 
-                language detection, and real-time threat intelligence.
-              </p>
-            </div>
+            <HeroSection onScanClick={scrollToScanner} />
 
-            {/* Stats */}
-            <StatsCards />
+            {/* Scanner Section */}
+            <section ref={scannerRef} className="py-16 md:py-24 scroll-mt-20">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Scan URL for Threats
+                </h2>
+                <p className="text-muted-foreground max-w-xl mx-auto">
+                  Enter any URL to analyze it with AI models and VirusTotal threat intelligence
+                </p>
+              </div>
 
-            {/* Scanner or Results */}
-            {result ? (
-              <AnalysisResults result={result} onNewScan={reset} />
-            ) : (
-              <UrlScanner
-                onAnalyze={handleAnalyze}
-                isAnalyzing={isAnalyzing}
-                progress={analysisProgress}
-                currentStep={currentStep}
-              />
-            )}
+              <div className="max-w-3xl mx-auto">
+                {result ? (
+                  <AnalysisResults result={result} onNewScan={reset} />
+                ) : (
+                  <UrlScanner
+                    onAnalyze={handleAnalyze}
+                    isAnalyzing={isAnalyzing}
+                    progress={analysisProgress}
+                    currentStep={currentStep}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* Features Section */}
+            <FeaturesSection />
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t border-border/40 py-6 mt-12">
-          <div className="container text-center text-sm text-muted-foreground">
-            <p>PhishGuard AI • Advanced Phishing Detection System</p>
-            <p className="mt-1">Powered by Lovable AI</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </ThemeProvider>
   );
