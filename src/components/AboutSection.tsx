@@ -3,15 +3,16 @@ import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Code } from 'lucide-react';
 
 const teamMembers = [
-  { name: 'Basit Ali', role: 'Developer' },
-  { name: 'Ali Hassan', role: 'Developer' },
-  { name: 'Hassam Mehmood', role: 'Developer' },
+  { name: 'Muhammad Basit Ali', role: 'ML Engineer' },
+  { name: 'Ali Hassan', role: 'Full Stack Developer' },
+  { name: 'Hassam Mehmood', role: 'Backend Developer' },
 ];
 
 const supervisor = {
-  name: 'Farhan Hassan',
+  name: 'Dr. Farhan Hassan Khan',
+  title: 'Project Supervisor',
   institution: 'The Islamia University of Bahawalpur',
-  description: 'Leading institution in research and innovation',
+  department: 'Department of Computer Science & IT',
 };
 
 export function AboutSection() {
@@ -81,8 +82,9 @@ export function AboutSection() {
               </div>
               <div>
                 <p className="text-xl font-bold text-foreground">{supervisor.name}</p>
+                <p className="text-sm text-muted-foreground">{supervisor.title}</p>
                 <p className="text-primary font-medium mt-1">{supervisor.institution}</p>
-                <p className="text-sm text-muted-foreground mt-2">{supervisor.description}</p>
+                <p className="text-sm text-muted-foreground mt-1">{supervisor.department}</p>
               </div>
             </div>
           </CardContent>
