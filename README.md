@@ -404,16 +404,24 @@ PhishGuard AI uses an **ensemble approach** combining multiple analysis vectors:
 <div align="center">
 
 ### Home Page
-*AI-powered phishing detection interface*
+*AI-powered phishing detection interface with hero section and URL scanner*
 
-### Analysis Results
-*Comprehensive threat assessment with visualizations*
+![Home Page](public/screenshots/home-page.png)
 
 ### Dashboard
-*Analytics and statistics overview*
+*Real-time analytics with scan activity charts and threat distribution*
+
+![Dashboard](public/screenshots/dashboard.png)
+
+### Scan History
+*Browse and search all previously scanned URLs with threat levels*
+
+![Scan History](public/screenshots/history.png)
 
 ### Bulk Scanner
-*Multi-URL scanning interface*
+*Multi-URL scanning interface with file upload and batch processing*
+
+![Bulk Scanner](public/screenshots/bulk-scanner.png)
 
 </div>
 
