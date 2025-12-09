@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Code } from 'lucide-react';
+import { useScrollAnimation, useStaggeredAnimation } from '@/hooks/useScrollAnimation';
 
 const teamMembers = [
   { name: 'Basit Ali', role: 'ML Engineer' },
@@ -16,9 +17,17 @@ const supervisor = {
 };
 
 export function AboutSection() {
+  const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation();
+  const { ref: cardsRef, isVisible: cardsVisible, getStaggerDelay } = useStaggeredAnimation<HTMLDivElement>(2);
+
   return (
     <section id="about" className="py-16 md:py-24">
-      <div className="text-center space-y-4 mb-12">
+      <div 
+        ref={headerRef}
+        className={`text-center space-y-4 mb-12 transition-all duration-700 ${
+          headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+      >
         <Badge variant="outline" className="text-primary border-primary/30">
           Our Team
         </Badge>
@@ -31,9 +40,14 @@ export function AboutSection() {
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div ref={cardsRef} className="grid gap-6 lg:grid-cols-2">
         {/* Project Team */}
-        <Card className="glass-card">
+        <Card 
+          className={`glass-card transition-all duration-500 ${
+            cardsVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
+          }`}
+          style={getStaggerDelay(0)}
+        >
           <CardHeader>
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -45,10 +59,13 @@ export function AboutSection() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              {teamMembers.map((member) => (
+              {teamMembers.map((member, index) => (
                 <div 
                   key={member.name}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  className={`flex items-center gap-4 p-4 rounded-xl bg-secondary/30 hover:bg-secondary/50 hover:scale-[1.02] transition-all duration-300 ${
+                    cardsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${(index + 1) * 150}ms` }}
                 >
                   <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                     <Code className="h-6 w-6 text-primary" />
@@ -64,7 +81,12 @@ export function AboutSection() {
         </Card>
 
         {/* Supervision */}
-        <Card className="glass-card">
+        <Card 
+          className={`glass-card transition-all duration-500 ${
+            cardsVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+          }`}
+          style={getStaggerDelay(1)}
+        >
           <CardHeader>
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -75,9 +97,14 @@ export function AboutSection() {
             <p className="text-sm text-muted-foreground">Academic Guidance</p>
           </CardHeader>
           <CardContent>
-            <div className="p-6 rounded-xl bg-secondary/30 text-center space-y-4">
+            <div 
+              className={`p-6 rounded-xl bg-secondary/30 text-center space-y-4 transition-all duration-500 ${
+                cardsVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}
+              style={{ transitionDelay: '300ms' }}
+            >
               <p className="text-sm text-muted-foreground">Supervised By</p>
-              <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+              <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center animate-pulse-slow">
                 <GraduationCap className="h-10 w-10 text-primary" />
               </div>
               <div>

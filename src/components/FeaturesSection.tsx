@@ -7,6 +7,7 @@ import {
   Lock 
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useStaggeredAnimation } from '@/hooks/useScrollAnimation';
 
 const features = [
   {
@@ -42,9 +43,15 @@ const features = [
 ];
 
 export function FeaturesSection() {
+  const { ref, isVisible, getStaggerDelay } = useStaggeredAnimation<HTMLDivElement>(features.length);
+
   return (
     <section id="features" className="py-16 md:py-24">
-      <div className="text-center space-y-4 mb-12">
+      <div 
+        className={`text-center space-y-4 mb-12 transition-all duration-700 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+      >
         <h2 className="text-3xl md:text-4xl font-bold">
           Advanced Detection Technology
         </h2>
@@ -54,17 +61,20 @@ export function FeaturesSection() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div ref={ref} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature, index) => (
           <Card 
             key={index} 
-            className="glass-card hover:border-primary/50 transition-all duration-300 group"
+            className={`glass-card hover:border-primary/50 transition-all duration-500 group ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+            }`}
+            style={getStaggerDelay(index)}
           >
             <CardContent className="p-6 space-y-4">
-              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
                 <feature.icon className="h-6 w-6 text-primary-foreground" />
               </div>
-              <h3 className="text-xl font-semibold">{feature.title}</h3>
+              <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">{feature.title}</h3>
               <p className="text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
